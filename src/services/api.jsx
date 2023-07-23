@@ -36,8 +36,8 @@ apiClient.interceptors.response.use((response) =>
 const processResponse = (response) => {
     
     const responseData = response;
-  
-    if (responseData.success) {
+    console.log(responseData);
+    if (responseData.status === 200) {
       return { 
         isSuccess: true, 
         data: responseData 

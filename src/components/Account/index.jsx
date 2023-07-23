@@ -1,11 +1,10 @@
 import React from 'react'
-import { useState,useContext} from 'react'
+import { useState} from 'react'
 import { API } from '../../services/api';
-import { DataContext } from '../../context/DataProvider';
 import { useNavigate } from 'react-router';
 import Login from './Login';
 import SignUp from './SignUp';
-
+import {useGlobalState} from "../../store/index.js";
 
 
 const signupInitialVlaue = {
@@ -14,20 +13,20 @@ const signupInitialVlaue = {
   password:''
 }
 
+
 const loginInitialVlaue = {
   username:'',
   password:''
 }
 
 
-const Toggleaccount = ({ isUserAuthenticated }) => {
-           
+const Toggleaccount = () => {
+
+    const {setAccount, isUserAuthenticated} = useGlobalState();
     const[account,toggleaccount] = useState('login');
     const[signup,setSignup]= useState(signupInitialVlaue);
     const[login,setLogin]= useState(loginInitialVlaue);
     const[error,setError] = useState('');
-
-    const { setAccount } = useContext(DataContext);
     
     const navigate = useNavigate();
      
@@ -57,11 +56,13 @@ const Toggleaccount = ({ isUserAuthenticated }) => {
 
   const loginUser = async() => {
     let response = await API.userLogin(login);
-    if(response.isSuccess){
-        sessionStorage.setItem('accessToken', `Bearer ${response.data.accessToken}`);
-        sessionStorage.setItem('refreshToken', `Bearer ${response.data.refreshToken}`);
+    if(response.data.msg !== null){
+      console.log(response.data.data.accessToken);
+        localStorage.setItem('accessToken', `Bearer ${response.data.data.accessToken}`);
+        localStorage.setItem('refreshToken', `Bearer ${response.data.data.refreshToken}`);
         setAccount({ email: response.data.email, username: response.data.username });
-        isUserAuthenticated(true);
+        isUserAuthenticated === true;
+        setError('');
         navigate('/');
     }else
     {
